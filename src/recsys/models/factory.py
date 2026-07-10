@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 import torch.nn as nn
 
 
-class ModelType(str, Enum):
+class ModelType(StrEnum):
     """Tipos de modelo suportados pela fábrica."""
 
     MLP = "mlp"
