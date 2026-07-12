@@ -1,0 +1,11 @@
+preprocess:
+  random_seed: 42
+
+feature_engineering:
+  test_size: 0.2
+
+train:
+  model_type: mlp
+  learning_rate: 0.001
+  epochs: 10
+  batch_size: 256
