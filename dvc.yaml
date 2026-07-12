@@ -1,0 +1,50 @@
+stages:
+  preprocess:
+    cmd: python scripts/preprocess.py
+    deps:
+      - data/raw
+      - src/recsys/data/preprocessing.py
+      - scripts/preprocess.py
+    params:
+      - preprocess.random_seed
+    outs:
+      - data/processed/interactions.parquet
+
+  feature_engineering:
+    cmd: python scripts/feature_engineering.py
+    deps:
+      - data/processed/interactions.parquet
+      - scripts/feature_engineering.py
+    params:
+      - feature_engineering.test_size
+    outs:
+      - data/processed/train.parquet
+      - data/processed/test.parquet
+      - data/processed/scaler.joblib
+
+  train:
+    cmd: python scripts/train.py
+    deps:
+      - data/processed/train.parquet
+      - src/recsys/models/factory.py
+      - scripts/train.py
+    params:
+      - train.model_type
+      - train.learning_rate
+      - train.epochs
+      - train.batch_size
+    outs:
+      - models/model.pt
+    metrics:
+      - metrics/train_metrics.json:
+          cache: false
+
+  evaluate:
+    cmd: python scripts/evaluate.py
+    deps:
+      - data/processed/test.parquet
+      - models/model.pt
+      - scripts/evaluate.py
+    metrics:
+      - metrics/eval_metrics.json:
+          cache: false
