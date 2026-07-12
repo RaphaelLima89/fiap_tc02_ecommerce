@@ -25,4 +25,13 @@ class SessionAggregationStrategy(PreprocessingStrategy):
     """Estratégia de agregação de sessões."""
 
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
-        raise NotImplementedError("Estratégia de agregação de sessões não implementada ainda.")
+        return (
+            data.groupby(["user_id", "product_id"])
+            .agg(
+                times_ordered=("order_id", "count"),
+                avg_add_to_cart_order=("add_to_cart_order", "mean"),
+                last_order_number=("order_number", "max"),
+                avg_days_since_prior_order=("days_since_prior_order", "mean"),
+            )
+            .reset_index()
+        )

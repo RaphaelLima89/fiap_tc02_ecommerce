@@ -10,3 +10,6 @@ max-complexity = 10
 [format]
 quote-style = "double"
 indent-style = "space"
+
+[lint.per-file-ignores]
+"scripts/*.py" = ["N806"]
