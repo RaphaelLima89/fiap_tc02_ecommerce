@@ -1,0 +1,107 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python scripts/preprocess.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: d77454baf88d147d71467d57d34b898c.dir
+      size: 713369324
+      nfiles: 6
+    - path: scripts/preprocess.py
+      hash: md5
+      md5: dbe97830b50d54460f8c07775c4f13b0
+      size: 1369
+    - path: src/recsys/data/preprocessing.py
+      hash: md5
+      md5: 1928f0796de9c7ae8486c8281e19f205
+      size: 1083
+    params:
+      params.yaml:
+        preprocess.random_seed: 42
+    outs:
+    - path: data/processed/interactions.parquet
+      hash: md5
+      md5: 27fe9b50f42c2ea838ec24d2c70ef6b0
+      size: 91242056
+  feature_engineering:
+    cmd: python scripts/feature_engineering.py
+    deps:
+    - path: data/processed/interactions.parquet
+      hash: md5
+      md5: 27fe9b50f42c2ea838ec24d2c70ef6b0
+      size: 91242056
+    - path: scripts/feature_engineering.py
+      hash: md5
+      md5: f5356563cd1678ea3410207af932d479
+      size: 1581
+    params:
+      params.yaml:
+        feature_engineering.test_size: 0.2
+    outs:
+    - path: data/processed/scaler.joblib
+      hash: md5
+      md5: c776105abec461e1f76acbebe53afb81
+      size: 1015
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 9023ca9e7d18c072b5d0d81511293a9b
+      size: 30317879
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: f2d46fd5be302d41681c4d238ba3a460
+      size: 121830424
+  train:
+    cmd: python scripts/train.py
+    deps:
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: f2d46fd5be302d41681c4d238ba3a460
+      size: 121830424
+    - path: scripts/train.py
+      hash: md5
+      md5: 621340e55a45678bd8193fe97c82dd7a
+      size: 2892
+    - path: src/recsys/models/factory.py
+      hash: md5
+      md5: a14658db60503847c33566478abde86f
+      size: 1791
+    params:
+      params.yaml:
+        train.batch_size: 256
+        train.epochs: 10
+        train.learning_rate: 0.001
+        train.model_type: mlp
+    outs:
+    - path: metrics/train_metrics.json
+      hash: md5
+      md5: 5c2e2e0e1831422d8aed2b27358c2ead
+      size: 47
+    - path: models/model.pt
+      hash: md5
+      md5: fbc8a0825e864eeac828b731eb8bf42d
+      size: 12477
+  evaluate:
+    cmd: python scripts/evaluate.py
+    deps:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 9023ca9e7d18c072b5d0d81511293a9b
+      size: 30317879
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: f2d46fd5be302d41681c4d238ba3a460
+      size: 121830424
+    - path: models/model.pt
+      hash: md5
+      md5: fbc8a0825e864eeac828b731eb8bf42d
+      size: 12477
+    - path: scripts/evaluate.py
+      hash: md5
+      md5: 2ce10b6bd11da42b2f47324e5d8b34f6
+      size: 3266
+    outs:
+    - path: metrics/eval_metrics.json
+      hash: md5
+      md5: ee3b660c740bd2a83d18ac61236d7ac4
+      size: 401
