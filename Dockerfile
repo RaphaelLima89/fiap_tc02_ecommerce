@@ -14,8 +14,10 @@ RUN mkdir -p /app/mlruns
 COPY --from=build /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=build /usr/local/bin /usr/local/bin
 COPY src/ ./src
+ENV PYTHONPATH=/app/src
 COPY scripts/ ./scripts
 COPY configs/ ./configs
+COPY params.yaml ./
 RUN chown -R recsys:recsys /app
 USER recsys
 ENTRYPOINT ["python"]

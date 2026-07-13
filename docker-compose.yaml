@@ -2,7 +2,7 @@ services:
   mlflow:
     build: .
     entrypoint: []
-    command: ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000", "--backend-store-uri", "sqlite:////app/mlruns/mlflow.db", "--default-artifact-root", "/app/mlruns/artifacts"]
+    command: ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000", "--backend-store-uri", "sqlite:////app/mlruns/mlflow.db", "--default-artifact-root", "/app/mlruns/artifacts", "--allowed-hosts", "mlflow:5000,localhost:5000,localhost"]
     ports:
       - "5000:5000"
     volumes:
@@ -16,9 +16,11 @@ services:
       - .env
     environment:
       MLFLOW_TRACKING_URI: http://mlflow:5000
+      GIT_PYTHON_REFRESH: "quiet"
     volumes:
       - ./data:/app/data
       - ./models:/app/models
+      - ./metrics:/app/metrics
     command: ["scripts/train.py"]
 
 volumes:
