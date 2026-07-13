@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import mlflow
+import mlflow.pytorch
 import pandas as pd
 import torch
 import yaml
@@ -75,7 +76,13 @@ def main() -> None:
         settings.models_dir.mkdir(parents=True, exist_ok=True)
         model_path = settings.models_dir / "model.pt"
         torch.save(model.state_dict(), model_path)
-        mlflow.log_artifact(str(model_path))
+
+        mlflow.pytorch.log_model(
+            model,
+            name="model",
+            registered_model_name="recsys-reorder-mlp",
+            input_example=X[:5].numpy(),
+        )
 
     metrics_dir = Path("metrics")
     metrics_dir.mkdir(parents=True, exist_ok=True)

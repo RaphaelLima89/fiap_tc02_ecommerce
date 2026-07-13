@@ -43,6 +43,7 @@ stages:
     cmd: python scripts/evaluate.py
     deps:
       - data/processed/test.parquet
+      - data/processed/train.parquet
       - models/model.pt
       - scripts/evaluate.py
     metrics:
